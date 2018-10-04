@@ -1,6 +1,7 @@
 import abc
 import codecs
 import json
+import warnings
 
 WHICH_PYTHON = None
 
@@ -72,3 +73,12 @@ if WHICH_PYTHON == 2:
 else:
     abstractclassmethod = abc.abstractclassmethod
     abstractstaticmethod = abc.abstractstaticmethod
+
+
+def suppress_warnings():
+    # in python 2, ResourceWarnings don't exist.
+    # in python 3, suppress ResourceWarnings about unclosed sockets, as the
+    # bigquery library never closes them.
+    if WHICH_PYTHON == 3:
+        warnings.filterwarnings("ignore", category=ResourceWarning,
+                                message="unclosed.*<socket.socket.*>")
